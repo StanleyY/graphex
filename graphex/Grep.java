@@ -1,23 +1,40 @@
 package graphex;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.util.ArrayList;
 
 class Grep{
 
-  public static void main(String[] args){
-    System.out.println("Regex was: " + args[0]);
+  static ArrayList<Character> generateAlphabet(String filename){
     try {
-      FileInputStream input = new FileInputStream(args[1]);
+      FileInputStream input = new FileInputStream(filename);
       BufferedReader br = new BufferedReader(new InputStreamReader(input));
+      ArrayList<Character> output = new ArrayList<Character>();
       String line;
-      while((line = br.readLine()) != null) {
-        System.out.println(line);
+
+      while((line = br.readLine()) != null){
+        for(char c : line.toCharArray()) {
+          if(output.indexOf(c) == -1){
+            output.add(c);
+          }
+        }
       }
+      return output;
     } catch (java.io.IOException e) {
       e.printStackTrace();
       System.exit(1);
     }
+    return null;
+  }
+
+  public static void main(String[] args){
+    String regex = args[0];
+    String filename = args[1];
+    ArrayList<Character> alphabet = generateAlphabet(filename);
+
+    System.out.println("Regex was: " + regex);
+    System.out.println(alphabet);
   }
 }
