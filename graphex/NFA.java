@@ -46,8 +46,7 @@ public class NFA{
   }
 
   private NFAnode generateNFA() throws InvalidException{
-    NFAnode start = new NFAnode(nodeNumber);
-    nodeNumber++;
+    NFAnode start = generateNewNode();
 
     if(input[parsePosition] == '('){
       parseParens(start);
@@ -58,9 +57,14 @@ public class NFA{
     return start;
   }
 
-  private void parseChar(NFAnode start){
-    NFAnode end = new NFAnode(nodeNumber);
+  private NFAnode generateNewNode(){
+    NFAnode node = new NFAnode(nodeNumber);
     nodeNumber++;
+    return node;
+  }
+
+  private void parseChar(NFAnode start){
+    NFAnode end = generateNewNode();
     System.out.println("adding " + input[parsePosition]);
     start.addEdge(input[parsePosition], end);
     parsePosition++;
