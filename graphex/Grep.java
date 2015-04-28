@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 class Grep{
 
+  static NFA graphNFA;
+
   static ArrayList<Character> generateAlphabet(String filename){
     try {
       FileInputStream input = new FileInputStream(filename);
@@ -34,6 +36,9 @@ class Grep{
     String filename = args[1];
     ArrayList<Character> alphabet = generateAlphabet(filename);
 
+    graphNFA = new NFA(regex);
+
+    graphNFA.generateDOTfile();
     System.out.println("Regex was: " + regex);
     System.out.println(alphabet);
   }
