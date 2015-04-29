@@ -112,9 +112,18 @@ public class NFA{
     }
   }
 
-  private NFAnode parseParens(NFAnode start){
-    parsePosition++; //Consume the open parens
-    return null;
+  private NFAnode parseParens(NFAnode start) throws InvalidException{
+    parsePosition++; //Consume the start parens
+    NFAnode end = start;
+    while(input[parsePosition] != ')'){
+      end = parseChar(end);
+      if(parsePosition > input.length) throw new InvalidException();
+    }
+    parsePosition++; //Consume the end parens
+    if(input[parsePosition] == '*'){
+      end = parseStar(start, end);
+    }
+    return end;
   }
 
   public void generateDOTfile(){
