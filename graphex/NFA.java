@@ -16,7 +16,8 @@ public class NFA{
   public NFA(String regex){
     try{
       input = regex.toCharArray();
-      root = generateNFA();
+      root = generateNewNode();
+      generateNFA(root);
     } catch (InvalidException e){
       e.printStackTrace();
       System.exit(1);
@@ -25,6 +26,7 @@ public class NFA{
 
   private class NFAnode{
     int number;
+    boolean visited = false;
     HashMap<Character, ArrayList<NFAnode>> edges = new HashMap<Character, ArrayList<NFAnode>>();
 
     public NFAnode(int nodeNumber){
@@ -45,30 +47,61 @@ public class NFA{
     }
   }
 
-  private NFAnode generateNFA() throws InvalidException{
-    NFAnode start = generateNewNode();
-
-    if(input[parsePosition] == '('){
-      parseParens(start);
-    }
-    else {
-      parseChar(start);
-    }
-    return start;
-  }
-
   private NFAnode generateNewNode(){
     NFAnode node = new NFAnode(nodeNumber);
     nodeNumber++;
     return node;
   }
 
+  private void generateNFA(NFAnode root) throws InvalidException{
+    if(input[parsePosition] == '('){
+      parseParens(root);
+    }
+    else {
+      parseChar(root);
+    }
+  }
+
   private void parseChar(NFAnode start){
     NFAnode end = generateNewNode();
     System.out.println("adding " + input[parsePosition]);
-    start.addEdge(input[parsePosition], end);
-    parsePosition++;
+    if(parsePosition + 1 < input.length){
+      if(input[parsePosition + 1] == '*'){
+        start.addEdge(input[parsePosition], end);
+        parsePosition++;
+        parseStar(start, end);
+      }
+      else{
+        start.addEdge(input[parsePosition], end);
+        parsePosition++;
+      }
+    }
+    else{
+      start.addEdge(input[parsePosition], end);
+      parsePosition++;
+    }
     parseNext(end);
+  }
+
+  private void parseStar(NFAnode start, NFAnode end){
+    System.out.println("adding *");
+    NFAnode original_start = generateNewNode();
+    NFAnode new_end = generateNewNode();
+    int temp = original_start.number;
+
+    // Swapping reference
+    original_start.number = start.number;
+    original_start.edges = start.edges;
+    start.number = temp;
+    start.edges = new HashMap<Character, ArrayList<NFAnode>>();
+
+    start.addEdge('ε', original_start);
+    start.addEdge('ε', new_end);
+    end.addEdge('ε', original_start);
+    end.addEdge('ε', new_end);
+
+    parsePosition++;
+    parseNext(new_end);
   }
 
   private void parseNext(NFAnode start){
@@ -96,10 +129,13 @@ public class NFA{
   }
 
   private void generateNodeDOT(PrintWriter out, NFAnode node){
-    for(Character transition : node.edges.keySet()){
-      for(NFAnode n : node.edges.get(transition)){
-        out.println(String.format(EDGE_DOT_FORMAT, node.number, n.number, transition));
-        generateNodeDOT(out, n);
+    if(!node.visited){
+      node.visited = true;
+      for(Character transition : node.edges.keySet()){
+        for(NFAnode n : node.edges.get(transition)){
+          out.println(String.format(EDGE_DOT_FORMAT, node.number, n.number, transition));
+          generateNodeDOT(out, n);
+        }
       }
     }
   }
