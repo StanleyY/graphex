@@ -36,10 +36,10 @@ class Grep{
     String filename = args[1];
     ArrayList<Character> alphabet = generateAlphabet(filename);
 
+    System.out.println("Regex was: " + regex);
     graphNFA = new NFA(regex);
 
     graphNFA.generateDOTfile();
-    System.out.println("Regex was: " + regex);
     System.out.println(alphabet);
   }
 }

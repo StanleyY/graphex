@@ -78,6 +78,12 @@ public class NFA{
         parsePosition++;
         end = parseStar(start, end);
         return end;
+      }else if(input[parsePosition + 1] == '|'){
+        NFAnode end = generateNewNode();
+        start.addEdge(input[parsePosition], end);
+        parsePosition++;
+        end = parseUnion(start, end);
+        return end;
       }
       else{
         NFAnode end = generateNewNode();
@@ -116,6 +122,28 @@ public class NFA{
     return new_end;
   }
 
+  private NFAnode parseUnion(NFAnode leftStart, NFAnode leftEnd){
+    System.out.println("adding |");
+    parsePosition++; //Consume the |
+    NFAnode commonStart = generateNewNode();
+    NFAnode rightStart = generateNewNode();
+    NFAnode rightEnd = parseChar(rightStart);
+    NFAnode commonEnd = generateNewNode();
+    int temp = commonStart.number;
+
+    // Swapping reference
+    commonStart.number = leftStart.number;
+    commonStart.edges = leftStart.edges;
+    leftStart.number = temp;
+    leftStart.edges = new HashMap<Character, ArrayList<NFAnode>>();
+
+    leftStart.addEdge('ε', commonStart);
+    leftStart.addEdge('ε', rightStart);
+    leftEnd.addEdge('ε', commonEnd);
+    rightEnd.addEdge('ε', commonEnd);
+    return commonEnd;
+  }
+
   private void parseNext(NFAnode start){
     if(parsePosition < input.length){
       System.out.println("PARSING NEXT");
@@ -132,8 +160,12 @@ public class NFA{
       if(parsePosition > input.length) throw new InvalidException();
     }
     parsePosition++; //Consume the end parens
-    if(input[parsePosition] == '*'){
-      end = parseStar(start, end);
+    if(parsePosition < input.length){
+      if(input[parsePosition] == '*'){
+        end = parseStar(start, end);
+      } else if(input[parsePosition] == '|'){
+        end = parseUnion(start, end);
+      }
     }
     return end;
   }
