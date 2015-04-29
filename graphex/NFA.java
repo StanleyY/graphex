@@ -175,6 +175,7 @@ public class NFA{
       PrintWriter output = new PrintWriter("NFA.dot");
       output.println("digraph {");
       output.println( (nodeNumber - 1) + " [shape = \"doublecircle\"];");
+      output.println("node [shape = \"circle\"];");
       generateNodeDOT(output, root);
       output.println("}");
       output.close();
