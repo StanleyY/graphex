@@ -14,14 +14,9 @@ public class NFA{
   int parsePosition = 0;
 
   public NFA(String regex){
-    try{
-      input = regex.toCharArray();
-      root = generateNewNode();
-      generateNFA(root);
-    } catch (InvalidException e){
-      e.printStackTrace();
-      System.exit(1);
-    }
+    input = regex.toCharArray();
+    root = generateNewNode();
+    generateNFA(root);
   }
 
   private class NFAnode{
@@ -53,9 +48,14 @@ public class NFA{
     return node;
   }
 
-  private void generateNFA(NFAnode root) throws InvalidException{
+  private void generateNFA(NFAnode root){
     if(input[parsePosition] == '('){
-      parseParens(root);
+      try{
+        parseParens(root);
+      } catch (InvalidException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
     }
     else {
       parseNext(parseChar(root));
@@ -66,7 +66,14 @@ public class NFA{
     NFAnode end = generateNewNode();
     System.out.println("adding " + input[parsePosition]);
     if(parsePosition + 1 < input.length){
-      if(input[parsePosition + 1] == '*'){
+      if(input[parsePosition] == '('){
+        try{
+          end = parseParens(start);
+        } catch (InvalidException e) {
+          e.printStackTrace();
+          System.exit(1);
+        }
+      }else if(input[parsePosition + 1] == '*'){
         start.addEdge(input[parsePosition], end);
         parsePosition++;
         end = parseStar(start, end);
