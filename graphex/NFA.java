@@ -51,7 +51,7 @@ public class NFA{
   private void generateNFA(NFAnode root){
     if(input[parsePosition] == '('){
       try{
-        parseParens(root);
+        parseNext(parseParens(root));
       } catch (InvalidException e) {
         e.printStackTrace();
         System.exit(1);
@@ -63,31 +63,36 @@ public class NFA{
   }
 
   private NFAnode parseChar(NFAnode start){
-    NFAnode end = generateNewNode();
-    System.out.println("adding " + input[parsePosition]);
+    System.out.println("parsing " + input[parsePosition]);
     if(parsePosition + 1 < input.length){
       if(input[parsePosition] == '('){
         try{
-          end = parseParens(start);
+          return parseParens(start);
         } catch (InvalidException e) {
           e.printStackTrace();
           System.exit(1);
         }
       }else if(input[parsePosition + 1] == '*'){
+        NFAnode end = generateNewNode();
         start.addEdge(input[parsePosition], end);
         parsePosition++;
         end = parseStar(start, end);
+        return end;
       }
       else{
+        NFAnode end = generateNewNode();
         start.addEdge(input[parsePosition], end);
         parsePosition++;
+        return end;
       }
     }
     else{
+      NFAnode end = generateNewNode();
       start.addEdge(input[parsePosition], end);
       parsePosition++;
+      return end;
     }
-    return end;
+    return null;
   }
 
   private NFAnode parseStar(NFAnode start, NFAnode end){
