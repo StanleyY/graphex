@@ -11,6 +11,7 @@ public class NFA{
   public NFAnode root;
   public NFAnode[] nodeList;
   public int startState = 0;
+  public int endState;
   private int nodeNumber = 0;
   private char[] input;
   private int parsePosition = 0;
@@ -21,6 +22,7 @@ public class NFA{
     root.isStartState = true;
     generateNFA(root);
     nodeList = new NFAnode[nodeNumber];
+    endState = nodeNumber - 1;
   }
 
   private class InvalidException extends Exception {
@@ -167,7 +169,7 @@ public class NFA{
     try{
       PrintWriter output = new PrintWriter("NFA.dot");
       output.println("digraph {");
-      output.println( (nodeNumber - 1) + " [shape = \"doublecircle\"];");
+      output.println( endState + " [shape = \"doublecircle\"];");
       output.println("node [shape = \"circle\"];");
       generateNodeDOT(output, root);
       output.println("}");
