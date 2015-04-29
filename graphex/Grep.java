@@ -40,6 +40,12 @@ class Grep{
     graphNFA = new NFA(regex);
 
     graphNFA.generateDOTfile();
+
+    /*
+    for(int i=0; i < graphNFA.nodeList.length; i++){
+      System.out.println("Node: " + graphNFA.nodeList[i].number);
+      System.out.println("Edges: " + graphNFA.nodeList[i].edges.toString());
+    }*/
     System.out.println(alphabet);
   }
 }

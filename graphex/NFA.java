@@ -6,23 +6,25 @@ import java.util.HashMap;
 
 public class NFA{
 
-  String EDGE_DOT_FORMAT = "%s -> %s[label=\"%s\"];";
+  private String EDGE_DOT_FORMAT = "%s -> %s[label=\"%s\"];";
 
-  NFAnode root;
-  int nodeNumber = 0;
-  char[] input;
-  int parsePosition = 0;
+  public NFAnode root;
+  public NFAnode[] nodeList;
+  private int nodeNumber = 0;
+  private char[] input;
+  private int parsePosition = 0;
 
   public NFA(String regex){
     input = regex.toCharArray();
     root = generateNewNode();
     generateNFA(root);
+    nodeList = new NFAnode[nodeNumber];
   }
 
-  private class NFAnode{
-    int number;
-    boolean visited = false;
-    HashMap<Character, ArrayList<NFAnode>> edges = new HashMap<Character, ArrayList<NFAnode>>();
+  public class NFAnode{
+    public int number;
+    public boolean visited = false;
+    public HashMap<Character, ArrayList<NFAnode>> edges = new HashMap<Character, ArrayList<NFAnode>>();
 
     public NFAnode(int nodeNumber){
       number = nodeNumber;
@@ -33,6 +35,10 @@ public class NFA{
         edges.put(symbol, new ArrayList<NFAnode>());
       }
       edges.get(symbol).add(node);
+    }
+
+    public String toString(){
+      return "NFAnode: " + number;
     }
   }
 
@@ -187,6 +193,7 @@ public class NFA{
 
   private void generateNodeDOT(PrintWriter out, NFAnode node){
     if(!node.visited){
+      nodeList[node.number] = node;
       node.visited = true;
       for(Character transition : node.edges.keySet()){
         for(NFAnode n : node.edges.get(transition)){
