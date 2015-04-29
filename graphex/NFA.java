@@ -10,6 +10,7 @@ public class NFA{
 
   public NFAnode root;
   public NFAnode[] nodeList;
+  public int startState = 0;
   private int nodeNumber = 0;
   private char[] input;
   private int parsePosition = 0;
@@ -17,6 +18,7 @@ public class NFA{
   public NFA(String regex){
     input = regex.toCharArray();
     root = generateNewNode();
+    root.isStartState = true;
     generateNFA(root);
     nodeList = new NFAnode[nodeNumber];
   }
@@ -25,6 +27,7 @@ public class NFA{
     public int number;
     public boolean visited = false;
     public HashMap<Character, ArrayList<NFAnode>> edges = new HashMap<Character, ArrayList<NFAnode>>();
+    private boolean isStartState = false;
 
     public NFAnode(int nodeNumber){
       number = nodeNumber;
@@ -114,6 +117,9 @@ public class NFA{
     int temp = original_start.number;
 
     // Swapping reference
+    if(start.isStartState) {
+      startState = temp;
+    }
     original_start.number = start.number;
     original_start.edges = start.edges;
     start.number = temp;
@@ -138,6 +144,9 @@ public class NFA{
     int temp = commonStart.number;
 
     // Swapping reference
+    if(leftStart.isStartState) {
+      startState = temp;
+    }
     commonStart.number = leftStart.number;
     commonStart.edges = leftStart.edges;
     leftStart.number = temp;
