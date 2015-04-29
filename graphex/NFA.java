@@ -58,18 +58,18 @@ public class NFA{
       parseParens(root);
     }
     else {
-      parseChar(root);
+      parseNext(parseChar(root));
     }
   }
 
-  private void parseChar(NFAnode start){
+  private NFAnode parseChar(NFAnode start){
     NFAnode end = generateNewNode();
     System.out.println("adding " + input[parsePosition]);
     if(parsePosition + 1 < input.length){
       if(input[parsePosition + 1] == '*'){
         start.addEdge(input[parsePosition], end);
         parsePosition++;
-        parseStar(start, end);
+        end = parseStar(start, end);
       }
       else{
         start.addEdge(input[parsePosition], end);
@@ -80,10 +80,10 @@ public class NFA{
       start.addEdge(input[parsePosition], end);
       parsePosition++;
     }
-    parseNext(end);
+    return end;
   }
 
-  private void parseStar(NFAnode start, NFAnode end){
+  private NFAnode parseStar(NFAnode start, NFAnode end){
     System.out.println("adding *");
     NFAnode original_start = generateNewNode();
     NFAnode new_end = generateNewNode();
@@ -101,18 +101,20 @@ public class NFA{
     end.addEdge('ε', new_end);
 
     parsePosition++;
-    parseNext(new_end);
+    return new_end;
   }
 
   private void parseNext(NFAnode start){
     if(parsePosition < input.length){
       System.out.println("PARSING NEXT");
-      parseChar(start);
+      start = parseChar(start);
+      parseNext(start);
     }
   }
 
-  private void parseParens(NFAnode start){
+  private NFAnode parseParens(NFAnode start){
     parsePosition++; //Consume the open parens
+    return null;
   }
 
   public void generateDOTfile(){
