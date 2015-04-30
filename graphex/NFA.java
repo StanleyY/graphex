@@ -131,7 +131,7 @@ public class NFA{
     parsePosition++; //Consume the start parens
     NFAnode end = start;
     while(input[parsePosition] != ')'){
-      end = parseChar(end);
+      end = parseNext(end);
       if(parsePosition > input.length) throw new InvalidException();
     }
     parsePosition++; //Consume the end parens
