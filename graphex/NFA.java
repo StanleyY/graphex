@@ -38,54 +38,42 @@ public class NFA{
   }
 
   private void generateNFA(NFAnode root){
-    if(input[parsePosition] == '('){
-      try{
-        parseNext(parseParens(root));
-      } catch (InvalidException e) {
-        e.printStackTrace();
-        System.exit(1);
+    parseNext(root);
+  }
+
+  private NFAnode parseNext(NFAnode start){
+    System.out.println("PARSING BLOCK");
+    if(parsePosition < input.length){
+      NFAnode end = parseChar(start);
+      if(parsePosition < input.length && input[parsePosition] == '|'){
+        end = parseUnion(start, end);
       }
+      return end;
     }
-    else {
-      parseNext(parseChar(root));
-    }
+    return null;
   }
 
   private NFAnode parseChar(NFAnode start){
+    if(parsePosition >= input.length || input[parsePosition] == '|' || input[parsePosition] == ')'){
+      return start;
+    }
     System.out.println("parsing " + input[parsePosition]);
-    if(parsePosition + 1 < input.length){
-      if(input[parsePosition] == '('){
-        try{
-          return parseParens(start);
-        } catch (InvalidException e) {
-          e.printStackTrace();
-          System.exit(1);
-        }
-      }else if(input[parsePosition + 1] == '*'){
-        NFAnode end = generateNewNode();
-        start.addEdge(input[parsePosition], end);
-        parsePosition++;
-        end = parseStar(start, end);
-        return end;
-      }else if(input[parsePosition + 1] == '|'){
-        NFAnode end = generateNewNode();
-        start.addEdge(input[parsePosition], end);
-        parsePosition++;
-        end = parseUnion(start, end);
-        return end;
-      }
-      else{
-        NFAnode end = generateNewNode();
-        start.addEdge(input[parsePosition], end);
-        parsePosition++;
-        return end;
+    if(input[parsePosition] == '('){
+      try{
+        return parseParens(start);
+      } catch (InvalidException e) {
+        e.printStackTrace();
+        System.exit(1);
       }
     }
     else{
       NFAnode end = generateNewNode();
       start.addEdge(input[parsePosition], end);
       parsePosition++;
-      return end;
+      if(parsePosition < input.length && input[parsePosition] == '*'){
+        end = parseStar(start, end);
+      }
+      return parseChar(end);
     }
     return null;
   }
@@ -115,11 +103,11 @@ public class NFA{
   }
 
   private NFAnode parseUnion(NFAnode leftStart, NFAnode leftEnd){
-    System.out.println("adding |");
+    System.out.println("adding | " + input[parsePosition]);
     parsePosition++; //Consume the |
     NFAnode commonStart = generateNewNode();
     NFAnode rightStart = generateNewNode();
-    NFAnode rightEnd = parseChar(rightStart);
+    NFAnode rightEnd = parseNext(rightStart);
     NFAnode commonEnd = generateNewNode();
     int temp = commonStart.number;
 
@@ -139,14 +127,6 @@ public class NFA{
     return commonEnd;
   }
 
-  private void parseNext(NFAnode start){
-    if(parsePosition < input.length){
-      System.out.println("PARSING NEXT");
-      start = parseChar(start);
-      parseNext(start);
-    }
-  }
-
   private NFAnode parseParens(NFAnode start) throws InvalidException{
     parsePosition++; //Consume the start parens
     NFAnode end = start;
@@ -155,14 +135,10 @@ public class NFA{
       if(parsePosition > input.length) throw new InvalidException();
     }
     parsePosition++; //Consume the end parens
-    if(parsePosition < input.length){
-      if(input[parsePosition] == '*'){
-        end = parseStar(start, end);
-      } else if(input[parsePosition] == '|'){
-        end = parseUnion(start, end);
-      }
+    if(parsePosition < input.length && input[parsePosition] == '*'){
+      end = parseStar(start, end);
     }
-    return end;
+    return parseChar(end);
   }
 
   public void generateDOTfile(){
