@@ -23,6 +23,7 @@ public class NFA{
     root.isStartState = true;
     generateNFA(root);
     nodeList = new NFAnode[nodeNumber];
+    generateNodeList(root);
     endState = nodeNumber - 1;
   }
 
@@ -142,6 +143,18 @@ public class NFA{
     return parseChar(end);
   }
 
+  private void generateNodeList(NFAnode node){
+    if(!node.visited){
+      nodeList[node.number] = node;
+      node.visited = true;
+      for(Character transition : node.edges.keySet()){
+        for(NFAnode n : node.edges.get(transition)){
+          generateNodeList(n);
+        }
+      }
+    }
+  }
+
   public void generateDOTfile(String regex, String filename){
     try{
       PrintWriter output = new PrintWriter(filename);
@@ -153,7 +166,7 @@ public class NFA{
       output.println("node [shape = \"circle\"];");
       output.println("-1[style=\"invis\"];");
       output.println("-1->" + root.number + ";");
-      generateNodeDOT(output, root);
+      generateNodeDOT(output);
       output.println("}");
       output.close();
     } catch (java.io.IOException e){
@@ -162,14 +175,13 @@ public class NFA{
     }
   }
 
-  private void generateNodeDOT(PrintWriter out, NFAnode node){
-    if(!node.visited){
-      nodeList[node.number] = node;
-      node.visited = true;
+  private void generateNodeDOT(PrintWriter out){
+    NFAnode node;
+    for(int i = 0; i < nodeList.length; i++){
+      node = nodeList[i];
       for(Character transition : node.edges.keySet()){
         for(NFAnode n : node.edges.get(transition)){
           out.println(String.format(EDGE_DOT_FORMAT, node.number, n.number, transition));
-          generateNodeDOT(out, n);
         }
       }
     }
