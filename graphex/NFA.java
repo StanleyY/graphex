@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public class NFA{
 
-  private String EDGE_DOT_FORMAT = "%s -> %s[label=\"%s\"];";
+  private final String EDGE_DOT_FORMAT = "%s -> %s[label=\"%s\"];";
+  private final char EPSILON = '\u03B5';
 
   public NFAnode root;
   public NFAnode[] nodeList;
@@ -93,10 +94,10 @@ public class NFA{
     start.number = temp;
     start.edges = new HashMap<Character, ArrayList<NFAnode>>();
 
-    start.addEdge('ε', original_start);
-    start.addEdge('ε', new_end);
-    end.addEdge('ε', original_start);
-    end.addEdge('ε', new_end);
+    start.addEdge(EPSILON, original_start);
+    start.addEdge(EPSILON, new_end);
+    end.addEdge(EPSILON, original_start);
+    end.addEdge(EPSILON, new_end);
 
     parsePosition++;
     return new_end;
@@ -120,10 +121,10 @@ public class NFA{
     leftStart.number = temp;
     leftStart.edges = new HashMap<Character, ArrayList<NFAnode>>();
 
-    leftStart.addEdge('ε', commonStart);
-    leftStart.addEdge('ε', rightStart);
-    leftEnd.addEdge('ε', commonEnd);
-    rightEnd.addEdge('ε', commonEnd);
+    leftStart.addEdge(EPSILON, commonStart);
+    leftStart.addEdge(EPSILON, rightStart);
+    leftEnd.addEdge(EPSILON, commonEnd);
+    rightEnd.addEdge(EPSILON, commonEnd);
     return commonEnd;
   }
 
