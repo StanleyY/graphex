@@ -146,6 +146,7 @@ public class NFA{
     try{
       PrintWriter output = new PrintWriter(filename);
       output.println("digraph {");
+      output.println("graph [fontname=\"Courier\"];");
       output.println("labelloc=\"t\";");
       output.println("label=\""+ regex +"\";");
       output.println( endState + " [shape = \"doublecircle\"];");
