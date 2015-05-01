@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 class Grep{
 
+  static boolean generateNFA = false;
+  static boolean generateDFA = false;
+  static String dfaFilename = "DFA.dot";
+  static String nfaFilename = "NFA.dot";
+
   static ArrayList<Character> generateAlphabet(String filename){
     try {
       FileInputStream input = new FileInputStream(filename);
@@ -61,22 +66,56 @@ class Grep{
     }
   }
 
+  static int parseArgs(String[] args){
+    if(args.length % 2 == 1 || args.length < 2 || args.length > 6) {
+      System.out.println("Usage: java graphex.Grep [-n NFA-FILE] [-d DFA-FILE] REGEX FILE");
+      System.exit(1);
+    }
+    int offset = 0;
+    if(args.length > 2) {
+      if(args[0].equals("-n")){
+        generateNFA = true;
+        nfaFilename = args[1];
+        offset += 2;
+      } else if(args[0].equals("-d")){
+        generateDFA = true;
+        dfaFilename = args[1];
+        offset += 2;
+      }
+      if(args[2].equals("-n")){
+        generateNFA = true;
+        nfaFilename = args[3];
+        offset += 2;
+      } else if(args[2].equals("-d")){
+        generateDFA = true;
+        dfaFilename = args[3];
+        offset += 2;
+      }
+    }
+    if(args.length - offset != 2){
+      System.out.println("Usage: java graphex.Grep [-n NFA-FILE] [-d DFA-FILE] REGEX FILE");
+      System.exit(1);
+    }
+    return offset;
+  }
+
   public static void main(String[] args){
-    String regex = args[0];
+    int offset = parseArgs(args);
+    String regex = args[offset];
     regex = cleanRegex(regex);
-    String inputFilename = args[1];
-    String dfaFilename = "DFA.dot";
-    String nfaFilename = "NFA.dot";
+    String inputFilename = args[offset + 1];
     ArrayList<Character> alphabet = generateAlphabet(inputFilename);
 
     NFA graphNFA = new NFA(regex);
     DFA graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState, graphNFA.endState, alphabet);
 
-    System.out.println("Alphabet: " + alphabet);
-    System.out.println("Regex was: " + regex);
+    if(generateNFA) {
+      graphNFA.generateDOTfile(regex, nfaFilename);
+    }
+    if(generateDFA) {
+      graphDFA.generateDOTfile(regex, dfaFilename);
+    }
 
     runRegex(regex, inputFilename, graphDFA);
-    graphNFA.generateDOTfile(regex, nfaFilename);
-    graphDFA.generateDOTfile(regex, dfaFilename);
   }
 }
