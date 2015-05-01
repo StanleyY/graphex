@@ -8,18 +8,17 @@ import java.util.TreeSet;
 public class DFA{
   private final char EPSILON = '\u03B5';
 
-  HashMap<TreeSet<Integer>, TreeSet<Integer>> transitionTable;
-  ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
-  ArrayList<TreeSet<Integer>> epsilonClosureTable;
-  ArrayList<Character> alphabet;
-  NFAnode[] nfaList;
+  private ArrayList<Character> alphabet;
+  private NFAnode[] nfaList;
+  private int nfaStart;
+  private int nfaEnd;
+
   int currentNode = 0;
-  int nfaStart;
-  int nfaEnd;
+  ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
+  ArrayList<TreeSet<Integer>> epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
+  ArrayList<DFAnode> dfaNodes = new ArrayList<DFAnode>();
 
   public DFA(NFAnode[] nfa, int startState, int endState, ArrayList<Character> alpha){
-    transitionTable = new HashMap<TreeSet<Integer>, TreeSet<Integer>>();
-    epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
     alphabet = alpha;
     for(int i = 0; i < nfa.length; i++){
       epsilonClosureTable.add(null);
@@ -62,7 +61,6 @@ public class DFA{
     for(char trans : alphabet){
       TreeSet<Integer> tempNode = new TreeSet<Integer>();
       for(int i : currentSet){
-        System.out.println("Trying for: " + trans);
         ArrayList<NFAnode> edges = nfaList[i].edges.get(trans);
         if(edges != null){
           System.out.println("Found Edges for: " + trans);
