@@ -31,6 +31,17 @@ class Grep{
     return null;
   }
 
+  static String cleanRegex(String regex){
+    StringBuilder sb = new StringBuilder(regex);
+    while(sb.indexOf("**") != -1){
+      sb.deleteCharAt(sb.indexOf("**"));
+    }
+    while(sb.indexOf("||") != -1){
+      sb.deleteCharAt(sb.indexOf("||"));
+    }
+    return sb.toString();
+  }
+
   static void runRegex(String regex, String filename, DFA dfa){
     try {
       FileInputStream input = new FileInputStream(filename);
@@ -52,6 +63,7 @@ class Grep{
 
   public static void main(String[] args){
     String regex = args[0];
+    regex = cleanRegex(regex);
     String inputFilename = args[1];
     String dfaFilename = "DFA.dot";
     String nfaFilename = "NFA.dot";
