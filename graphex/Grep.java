@@ -12,7 +12,7 @@ class Grep{
   static String dfaFilename = "DFA.dot";
   static String nfaFilename = "NFA.dot";
 
-  static ArrayList<Character> generateAlphabet(String filename){
+  static ArrayList<Character> generateAlphabet(String filename, String regex){
     try {
       FileInputStream input = new FileInputStream(filename);
       BufferedReader br = new BufferedReader(new InputStreamReader(input));
@@ -28,6 +28,13 @@ class Grep{
       }
       br.close();
       input.close();
+
+      String ignore = "|()*";
+      for(char c : regex.toCharArray()) {
+        if(!ignore.contains("" + c) && output.indexOf(c) == -1){
+          output.add(c);
+        }
+      }
       return output;
     } catch (java.io.IOException e) {
       e.printStackTrace();
@@ -104,8 +111,7 @@ class Grep{
     String regex = args[offset];
     regex = cleanRegex(regex);
     String inputFilename = args[offset + 1];
-    ArrayList<Character> alphabet = generateAlphabet(inputFilename);
-
+    ArrayList<Character> alphabet = generateAlphabet(inputFilename, regex);
     NFA graphNFA = new NFA(regex);
     DFA graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState, graphNFA.endState, alphabet);
 
