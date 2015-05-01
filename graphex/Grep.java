@@ -35,6 +35,7 @@ class Grep{
   public static void main(String[] args){
     String regex = args[0];
     String filename = args[1];
+    String dfaFilename = "DFA.dot";
     String nfaFilename = "NFA.dot";
     ArrayList<Character> alphabet = generateAlphabet(filename);
 
@@ -45,6 +46,8 @@ class Grep{
 
     System.out.println("\nBeginning DFA\n");
     graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState, graphNFA.endState, alphabet);
+
+    graphDFA.generateDOTfile(regex, dfaFilename);
     /*
     for(int i=0; i < graphNFA.nodeList.length; i++){
       System.out.println("Node: " + graphNFA.nodeList[i].number);

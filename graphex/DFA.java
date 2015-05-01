@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 public class DFA{
+  private final String EDGE_DOT_FORMAT = "%s -> %s[label=\"%s\"];";
   private final char EPSILON = '\u03B5';
 
   private ArrayList<Character> alphabet;
@@ -53,7 +54,7 @@ public class DFA{
     }
 
     public String toString(){
-      return "DFAnode: " + number;
+      return "DFAnode " + number + " " + edges;
     }
   }
 
@@ -62,9 +63,10 @@ public class DFA{
     dfaList.add(startNode);
     dfaNodes.add(new DFAnode(0));
     System.out.println(startNode);
-    while(nodeNum < dfaList.size()){
-      transitionLookup(nodeNum);
-      nodeNum++;
+    int currentNode = 0;
+    while(currentNode < dfaList.size()){
+      transitionLookup(currentNode);
+      currentNode++;
     }
   }
 
@@ -92,6 +94,7 @@ public class DFA{
         }
       }
       if(tempNode.size() > 0 && !dfaList.contains(tempNode)) {
+        nodeNum++;
         currentNode.addEdge(trans, nodeNum);
         dfaList.add(tempNode);
         dfaNodes.add(new DFAnode(dfaList.size() - 1));
@@ -143,5 +146,38 @@ public class DFA{
     }
     epsilonClosureTable.set(number, list);
     //System.out.println("Added to " + number + ", The Set: " + list);
+  }
+
+  public void generateDOTfile(String regex, String filename){
+    try{
+      PrintWriter output = new PrintWriter(filename);
+      output.println("digraph {");
+      output.println("graph [fontname=\"Courier\"];");
+      output.println("labelloc=\"t\";");
+      output.println("label=\""+ regex +"\";");
+      output.println("node [shape = \"doublecircle\"];");
+      output.println(acceptingStates.toString().replace(",", "").replace("[", "").replace("]", "") + ";");
+      output.println("node [shape = \"circle\"];");
+      output.println("-1[style=\"invis\"];");
+      output.println("-1-> 0;");
+      generateNodeDOT(output, 0);
+      output.println("}");
+      output.close();
+    } catch (java.io.IOException e){
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  private void generateNodeDOT(PrintWriter out, int node){
+    DFAnode currentNode = dfaNodes.get(node);
+    if(!currentNode.visited){
+      currentNode.visited = true;
+      for(char transition : currentNode.edges.keySet()){
+        int edge = currentNode.edges.get(transition);
+        out.println(String.format(EDGE_DOT_FORMAT, node, edge, transition));
+        generateNodeDOT(out, edge);
+      }
+    }
   }
 }
