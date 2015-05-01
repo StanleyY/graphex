@@ -146,6 +146,20 @@ public class DFA{
     epsilonClosureTable.set(number, list);
   }
 
+  public boolean isValid(char[] input){
+    DFAnode currentNode = dfaNodes.get(0);
+    for(int i = 0; i < input.length; i++){
+      char c = input[i];
+      Integer temp = currentNode.edges.get(c); //using Integer to allow null
+      if(temp == null){
+        return false;
+      }
+      currentNode = dfaNodes.get(temp);
+    }
+    if(acceptingStates.contains(currentNode.number)) return true;
+    return false;
+  }
+
   public void generateDOTfile(String regex, String filename){
     try{
       PrintWriter output = new PrintWriter(filename);

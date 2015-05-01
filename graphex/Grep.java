@@ -21,12 +21,33 @@ class Grep{
           }
         }
       }
+      br.close();
+      input.close();
       return output;
     } catch (java.io.IOException e) {
       e.printStackTrace();
       System.exit(1);
     }
     return null;
+  }
+
+  static void runRegex(String regex, String filename, DFA dfa){
+    try {
+      FileInputStream input = new FileInputStream(filename);
+      BufferedReader br = new BufferedReader(new InputStreamReader(input));
+      String line;
+
+      while((line = br.readLine()) != null){
+        if(dfa.isValid(line.toCharArray())) {
+          System.out.println(line);
+        }
+      }
+      br.close();
+      input.close();
+    } catch (java.io.IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
   public static void main(String[] args){
@@ -42,6 +63,7 @@ class Grep{
     System.out.println("Alphabet: " + alphabet);
     System.out.println("Regex was: " + regex);
 
+    runRegex(regex, inputFilename, graphDFA);
     graphNFA.generateDOTfile(regex, nfaFilename);
     graphDFA.generateDOTfile(regex, dfaFilename);
   }
