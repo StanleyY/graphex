@@ -158,8 +158,10 @@ public class DFA{
       output.println("graph [fontname=\"Courier\"];");
       output.println("labelloc=\"t\";");
       output.println("label=\""+ regex +"\";");
-      output.println("node [shape = \"doublecircle\"];");
-      output.println(acceptingStates.toString().replace(",", "").replace("[", "").replace("]", "") + ";");
+      if(acceptingStates.size() > 0){
+        output.println("node [shape = \"doublecircle\"];");
+        output.println(acceptingStates.toString().replace(",", "").replace("[", "").replace("]", "") + ";");
+      }
       output.println("node [shape = \"circle\"];");
       output.println("-1[style=\"invis\"];");
       output.println("-1-> 0;");
