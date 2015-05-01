@@ -11,7 +11,6 @@ public class DFA{
 
   private ArrayList<Character> alphabet;
   private NFAnode[] nfaList;
-  private int nfaStart;
   private int nfaEnd;
 
   int nodeNum = 0;
@@ -28,9 +27,6 @@ public class DFA{
     nfaList = nfa;
     nfaEnd = endState;
     generateDFA(startState);
-    System.out.println("DFA: " + dfaList);
-    System.out.println("All States: " + dfaNodes);
-    System.out.println("Accepting States: " + acceptingStates);
   }
 
   private class DFAnode{
@@ -148,7 +144,6 @@ public class DFA{
       }
     }
     epsilonClosureTable.set(number, list);
-    //System.out.println("Added to " + number + ", The Set: " + list);
   }
 
   public void generateDOTfile(String regex, String filename){

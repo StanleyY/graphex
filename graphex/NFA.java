@@ -44,7 +44,6 @@ public class NFA{
   }
 
   private NFAnode parseNext(NFAnode start){
-    System.out.println("PARSING BLOCK");
     if(parsePosition < input.length){
       NFAnode end = parseChar(start);
       if(parsePosition < input.length && input[parsePosition] == '|'){
@@ -59,7 +58,6 @@ public class NFA{
     if(parsePosition >= input.length || input[parsePosition] == '|' || input[parsePosition] == ')'){
       return start;
     }
-    System.out.println("parsing " + input[parsePosition]);
     if(input[parsePosition] == '('){
       try{
         return parseParens(start);
@@ -81,7 +79,6 @@ public class NFA{
   }
 
   private NFAnode parseStar(NFAnode start, NFAnode end){
-    System.out.println("adding *");
     NFAnode original_start = generateNewNode();
     NFAnode new_end = generateNewNode();
     int temp = original_start.number;
@@ -105,7 +102,6 @@ public class NFA{
   }
 
   private NFAnode parseUnion(NFAnode leftStart, NFAnode leftEnd){
-    System.out.println("adding | " + input[parsePosition]);
     parsePosition++; //Consume the |
     NFAnode commonStart = generateNewNode();
     NFAnode rightStart = generateNewNode();
