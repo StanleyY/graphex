@@ -40,10 +40,10 @@ public class NFA{
   }
 
   private void generateNFA(NFAnode root){
-    parseNext(root);
+    parseRegex(root);
   }
 
-  private NFAnode parseNext(NFAnode start){
+  private NFAnode parseRegex(NFAnode start){
     if(parsePosition < input.length){
       NFAnode end = parseChar(start);
       if(parsePosition < input.length && input[parsePosition] == '|'){
@@ -105,7 +105,7 @@ public class NFA{
     parsePosition++; //Consume the |
     NFAnode commonStart = generateNewNode();
     NFAnode rightStart = generateNewNode();
-    NFAnode rightEnd = parseNext(rightStart);
+    NFAnode rightEnd = parseRegex(rightStart);
     NFAnode commonEnd = generateNewNode();
     int temp = commonStart.number;
 
@@ -129,7 +129,7 @@ public class NFA{
     parsePosition++; //Consume the start parens
     NFAnode end = start;
     while(input[parsePosition] != ')'){
-      end = parseNext(end);
+      end = parseRegex(end);
       if(parsePosition > input.length) throw new InvalidException();
     }
     parsePosition++; //Consume the end parens

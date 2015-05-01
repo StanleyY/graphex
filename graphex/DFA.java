@@ -13,11 +13,11 @@ public class DFA{
   private NFAnode[] nfaList;
   private int nfaEnd;
 
-  int nodeNum = 0;
-  ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
-  ArrayList<TreeSet<Integer>> epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
-  ArrayList<DFAnode> dfaNodes = new ArrayList<DFAnode>();
-  TreeSet<Integer> acceptingStates = new TreeSet<Integer>();
+  private int nodeNum = 0;
+  private ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
+  private ArrayList<TreeSet<Integer>> epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
+  private ArrayList<DFAnode> dfaNodes = new ArrayList<DFAnode>();
+  private TreeSet<Integer> acceptingStates = new TreeSet<Integer>();
 
   public DFA(NFAnode[] nfa, int startState, int endState, ArrayList<Character> alpha){
     alphabet = alpha;

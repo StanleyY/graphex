@@ -112,7 +112,6 @@ class Grep{
     regex = cleanRegex(regex);
     String inputFilename = args[offset + 1];
     ArrayList<Character> alphabet = generateAlphabet(inputFilename, regex);
-    System.out.println(alphabet);
     NFA graphNFA = new NFA(regex);
     DFA graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState, graphNFA.endState, alphabet);
 
