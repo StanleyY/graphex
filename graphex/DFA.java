@@ -14,7 +14,7 @@ public class DFA{
   private int nfaEnd;
 
   private int nodeNum = 0;
-  private ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
+  private ArrayList<TreeSet<Integer>> setList = new ArrayList<TreeSet<Integer>>();
   private ArrayList<TreeSet<Integer>> epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
   private ArrayList<DFAnode> dfaNodes = new ArrayList<DFAnode>();
   private TreeSet<Integer> acceptingStates = new TreeSet<Integer>();
@@ -56,17 +56,17 @@ public class DFA{
 
   private void generateDFA(int startState){
     TreeSet<Integer> startNode = epsilonClosure(startState);
-    dfaList.add(startNode);
+    setList.add(startNode);
     dfaNodes.add(new DFAnode(0));
     int currentNode = 0;
-    while(currentNode < dfaList.size()){
+    while(currentNode < setList.size()){
       transitionLookup(currentNode);
       currentNode++;
     }
   }
 
   private void transitionLookup(int nodeNumber){
-    TreeSet<Integer> currentSet = dfaList.get(nodeNumber);
+    TreeSet<Integer> currentSet = setList.get(nodeNumber);
     DFAnode currentNode = dfaNodes.get(nodeNumber);
 
     if(currentSet.contains(nfaEnd)){
@@ -87,14 +87,14 @@ public class DFA{
         }
       }
       if(tempNode.size() > 0) {
-        if(dfaList.contains(tempNode)){
-          currentNode.addEdge(trans, dfaList.indexOf(tempNode));
+        if(setList.contains(tempNode)){
+          currentNode.addEdge(trans, setList.indexOf(tempNode));
         }
         else{
           nodeNum++;
           currentNode.addEdge(trans, nodeNum);
-          dfaList.add(tempNode);
-          dfaNodes.add(new DFAnode(dfaList.size() - 1));
+          setList.add(tempNode);
+          dfaNodes.add(new DFAnode(setList.size() - 1));
         }
 
       }
