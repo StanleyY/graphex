@@ -17,6 +17,7 @@ public class DFA{
   ArrayList<TreeSet<Integer>> dfaList = new ArrayList<TreeSet<Integer>>();
   ArrayList<TreeSet<Integer>> epsilonClosureTable = new ArrayList<TreeSet<Integer>>();
   ArrayList<DFAnode> dfaNodes = new ArrayList<DFAnode>();
+  TreeSet<Integer> acceptingStates = new TreeSet<Integer>();
 
   public DFA(NFAnode[] nfa, int startState, int endState, ArrayList<Character> alpha){
     alphabet = alpha;
@@ -24,9 +25,10 @@ public class DFA{
       epsilonClosureTable.add(null);
     }
     nfaList = nfa;
+    nfaEnd = endState;
     generateDFA(startState);
-    System.out.println("DFA");
-    System.out.println(dfaList);
+    System.out.println("DFA: " + dfaList);
+    System.out.println("Accepting States: " + acceptingStates);
   }
 
   private class DFAnode{
@@ -58,6 +60,10 @@ public class DFA{
 
   private void transitionLookup(int nodeNumber){
     TreeSet<Integer> currentSet = dfaList.get(nodeNumber);
+    if(currentSet.contains(nfaEnd)){
+      System.out.println(currentSet + " contains " + nfaEnd);
+      acceptingStates.add(nodeNumber);
+    }
     for(char trans : alphabet){
       TreeSet<Integer> tempNode = new TreeSet<Integer>();
       for(int i : currentSet){
