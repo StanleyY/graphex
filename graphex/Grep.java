@@ -8,7 +8,7 @@ import java.util.ArrayList;
 class Grep{
 
   static NFA graphNFA;
-  static DFA graphDFA;
+  //static DFA graphDFA;
 
   static ArrayList<Character> generateAlphabet(String filename){
     try {
@@ -35,14 +35,15 @@ class Grep{
   public static void main(String[] args){
     String regex = args[0];
     String filename = args[1];
+    String nfaFilename = "NFA.dot";
     ArrayList<Character> alphabet = generateAlphabet(filename);
 
     System.out.println("Regex was: " + regex);
     graphNFA = new NFA(regex);
 
-    graphNFA.generateDOTfile();
+    graphNFA.generateDOTfile(regex, nfaFilename);
 
-    graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState);
+    graphDFA = new DFA(graphNFA.nodeList, graphNFA.startState, graphNFA.endState, alphabet);
     /*
     for(int i=0; i < graphNFA.nodeList.length; i++){
       System.out.println("Node: " + graphNFA.nodeList[i].number);

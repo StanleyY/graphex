@@ -142,12 +142,16 @@ public class NFA{
     return parseChar(end);
   }
 
-  public void generateDOTfile(){
+  public void generateDOTfile(String regex, String filename){
     try{
-      PrintWriter output = new PrintWriter("NFA.dot");
+      PrintWriter output = new PrintWriter(filename);
       output.println("digraph {");
+      output.println("labelloc=\"t\";");
+      output.println("label=\""+ regex +"\";");
       output.println( endState + " [shape = \"doublecircle\"];");
       output.println("node [shape = \"circle\"];");
+      output.println("-1[style=\"invis\"];");
+      output.println("-1->" + root.number + ";");
       generateNodeDOT(output, root);
       output.println("}");
       output.close();
